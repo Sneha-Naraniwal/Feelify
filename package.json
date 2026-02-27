@@ -1,0 +1,15 @@
+{
+  "name": "majorproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build":"npm intsall  --prefix frontend && npm intsall  --prefix backend && npm run build --prefix frontend",
+    
+    "start":"npm run start --prefix backend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
