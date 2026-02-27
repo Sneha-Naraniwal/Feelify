@@ -11,7 +11,7 @@ app.use(express.json())
 app.use(cors({origin:ENV.CLIENT_URL, credentials:true}))
 
 const __dirname=path.resolve();
-app.get("/",(req, res)=>{
+app.get("/api",(req, res)=>{
   res.status(200).json({msg:" Success from api"})
 })
 ////f app for deployment
