@@ -11,6 +11,7 @@ const app=express();
 app.use(express.json())
 // here true means server alows a browser to send cookies to the server, and also allows the browser to read cookies from the server.
 app.use(cors({origin:ENV.CLIENT_URL, credentials:true}))
+console.log("Signing key:", process.env.INNGEST_SIGNING_KEY);
 app.use("/api/inngest", serve({client:inngest , functions}))
 
 
