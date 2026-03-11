@@ -1,4 +1,4 @@
-import './App.css'
+
 import {
   SignedIn,
   SignedOut,
@@ -6,6 +6,7 @@ import {
   SignOutButton,
   UserButton
 } from "@clerk/clerk-react";
+import {Route , Routes} from 'react-router';
 
 function App() {
   return (
