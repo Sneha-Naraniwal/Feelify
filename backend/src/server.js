@@ -4,18 +4,27 @@ import {ENV} from "./lib/env.js"
 import { connectDB } from "./lib/db.js"; 
 import cors from "cors";
 import {serve} from "inngest/express";
+import {clerkMiddleware} from '@clerk/express'
 import {inngest, functions} from "./lib/inngest.js";
+import chatRoutes from "./routes/chatRoutes.js";
+import sessionRoutes from "./routes/sessionRoutes.js";
 const app=express();
+ 
+const __dirname=path.resolve();
 
 /// middleware
 app.use(express.json())
 // here true means server alows a browser to send cookies to the server, and also allows the browser to read cookies from the server.
 app.use(cors({origin:ENV.CLIENT_URL, credentials:true}))
-console.log("Signing key:", process.env.INNGEST_SIGNING_KEY);
+app.use(clerkMiddleware()) /// this will add the user object to the request if the user is authenticated same as req.auuth()
+
 app.use("/api/inngest", serve({client:inngest , functions}))
+app.use("/api/chat", chatRoutes);
+app.use("/api/sessions", sessionRoutes);
 
 
-const __dirname=path.resolve();
+
+
 app.get("/health", (req, res)=>{
   res.status(200).json({msg:" Success from api"})
 })
