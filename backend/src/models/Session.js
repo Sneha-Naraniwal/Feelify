@@ -31,6 +31,13 @@ const sessionSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    // invite-only access code
+    inviteCode: {
+      type: String,
+      unique: true,
+      sparse: true, // allow null/empty for old sessions without codes
+      default: "",
+    },
   },
   { timestamps: true }
 );

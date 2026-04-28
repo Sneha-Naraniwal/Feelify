@@ -1,12 +1,55 @@
 @import "tailwindcss";
-@plugin "daisyui" {
-  themes: all;
+
+/* Plus Jakarta Sans for that premium feel */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@plugin "daisyui" { 
+  themes: all; 
 }
 
-/* Add cursor pointer to buttons by default - this is coming from tailwind docs */
 @layer base {
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    cursor: pointer;
+  :root {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    /* Light Mode Variables */
+    --bg-main: #f8fafc;
+    --text-main: #0f172a;
   }
+
+  /* Dark Mode Variables - Triggered by the context provider */
+  .dark {
+    --bg-main: #0a0a0a; /* Deep black for premium OLED look */
+    --text-main: #f1f5f9;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    /* Smooth transition when switching themes */
+    @apply transition-colors duration-300 ease-in-out;
+  }
+}
+
+@layer utilities {
+  /* Modern Premium Glass Card - Responsive to Dark Mode */
+  .glass-card {
+    @apply bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md 
+           border border-white dark:border-zinc-800 
+           shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)];
+  }
+
+  /* Modern Hide Scrollbar Utility */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Fix for Monaco Editor Container in Dark Mode */
+.dark .monaco-editor,
+.dark .monaco-editor .margin,
+.dark .monaco-editor-background {
+  background-color: #0a0a0a !important;
 }
