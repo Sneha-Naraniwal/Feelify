@@ -1,49 +1,57 @@
 import { TerminalIcon, CheckCircle2Icon, AlertCircleIcon } from "lucide-react";
 
 function OutputPanel({ output }) {
-  // Determine status color for the border and icon
   const isSuccess = output?.success;
   const isError = output && !output.success;
 
   return (
-    <div className={`h-full flex flex-col transition-colors duration-500 ${
-      isSuccess ? "bg-emerald-50/30" : isError ? "bg-rose-50/30" : "bg-white"
-    }`}>
+    <div className={`h-full flex flex-col bg-[#0f1117] transition-colors duration-300`}>
       {/* TERMINAL HEADER */}
-      <div className="px-6 py-3 border-b border-slate-100 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <TerminalIcon size={16} className={isSuccess ? "text-emerald-500" : isError ? "text-rose-500" : "text-slate-400"} />
-          <span className="text-[11px] font-black uppercase tracking-widest text-slate-900">Console Output</span>
+      <div className="px-5 py-2.5 border-b border-white/6 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2.5">
+          <TerminalIcon
+            size={14}
+            className={isSuccess ? "text-emerald-400" : isError ? "text-rose-400" : "text-slate-600"}
+          />
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Console Output</span>
         </div>
-        {isSuccess && <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1"><CheckCircle2Icon size={12}/> SUCCESS</span>}
-        {isError && <span className="text-[10px] font-bold text-rose-600 flex items-center gap-1"><AlertCircleIcon size={12}/> EXECUTION FAILED</span>}
+        {isSuccess && (
+          <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+            <CheckCircle2Icon size={11} /> Executed
+          </span>
+        )}
+        {isError && (
+          <span className="text-[10px] font-bold text-rose-400 flex items-center gap-1">
+            <AlertCircleIcon size={11} /> Failed
+          </span>
+        )}
       </div>
 
-      <div className="flex-1 overflow-auto p-8 font-mono">
+      <div className="flex-1 overflow-auto p-5 font-mono">
         {output === null ? (
-          <div className="h-full flex flex-col items-center justify-center opacity-20 grayscale">
-            <TerminalIcon size={40} className="mb-4" />
-            <p className="text-xs font-bold uppercase tracking-[0.2em]">Ready for input...</p>
+          <div className="h-full flex flex-col items-center justify-center opacity-20">
+            <TerminalIcon size={32} className="mb-3 text-slate-500" />
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Ready for input...</p>
           </div>
         ) : (
           <div className="space-y-4">
-             {/* Standard Output */}
             {output.output && (
-              <div className="space-y-2">
-                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Stdout</p>
-                <pre className={`text-sm p-4 rounded-2xl border ${
-                  isSuccess ? "bg-emerald-50 border-emerald-100 text-emerald-900" : "bg-slate-50 border-slate-100 text-slate-700"
-                } whitespace-pre-wrap leading-relaxed`}>
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Stdout</p>
+                <pre className={`text-xs p-4 rounded-xl border whitespace-pre-wrap leading-relaxed ${
+                  isSuccess
+                    ? "bg-emerald-500/8 border-emerald-500/15 text-emerald-300"
+                    : "bg-white/4 border-white/8 text-slate-300"
+                }`}>
                   {output.output}
                 </pre>
               </div>
             )}
-            
-            {/* Error Output */}
+
             {output.error && (
-              <div className="space-y-2">
-                <p className="text-[10px] font-black text-rose-300 uppercase tracking-widest">Stderr</p>
-                <pre className="text-sm p-4 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700 whitespace-pre-wrap leading-relaxed shadow-sm">
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest">Stderr</p>
+                <pre className="text-xs p-4 rounded-xl bg-rose-500/8 border border-rose-500/15 text-rose-300 whitespace-pre-wrap leading-relaxed">
                   {output.error}
                 </pre>
               </div>

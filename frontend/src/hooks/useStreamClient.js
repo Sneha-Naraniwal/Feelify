@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { StreamChat } from "stream-chat";
 import toast from "react-hot-toast";
 import { initializeStreamClient, disconnectStreamClient } from "../lib/stream";
@@ -10,18 +10,30 @@ function useStreamClient(session, loadingSession, isHost, isParticipant) {
   const [chatClient, setChatClient] = useState(null);
   const [channel, setChannel] = useState(null);
   const [isInitializingCall, setIsInitializingCall] = useState(true);
+  const hasInitialized = useRef(false);
+
+  // Only depend on callId and status — NOT the full session object
+  // This prevents Stream from tearing down when problem index changes
+  const callId = session?.callId;
+  const sessionStatus = session?.status;
+  const canJoin = (isHost || isParticipant) && !loadingSession;
 
   useEffect(() => {
     let videoCall = null;
     let chatClientInstance = null;
+    let isCancelled = false;
 
     const initCall = async () => {
-      if (!session?.callId) return;
-      if (!isHost && !isParticipant) return;
-      if (session.status === "completed") return;
+      if (!callId || !canJoin) return;
+      if (sessionStatus === "completed") return;
+      if (hasInitialized.current) return; // Don't re-init if already connected
+
+      hasInitialized.current = true;
 
       try {
         const { token, userId, userName, userImage } = await sessionApi.getStreamToken();
+
+        if (isCancelled) return;
 
         const client = await initializeStreamClient(
           {
@@ -32,10 +44,15 @@ function useStreamClient(session, loadingSession, isHost, isParticipant) {
           token
         );
 
+        if (isCancelled) return;
+
         setStreamClient(client);
 
-        videoCall = client.call("default", session.callId);
+        videoCall = client.call("default", callId);
         await videoCall.join({ create: true });
+
+        if (isCancelled) return;
+
         setCall(videoCall);
 
         const apiKey = import.meta.env.VITE_STREAM_API_KEY;
@@ -49,24 +66,31 @@ function useStreamClient(session, loadingSession, isHost, isParticipant) {
           },
           token
         );
+
+        if (isCancelled) return;
+
         setChatClient(chatClientInstance);
 
-        const chatChannel = chatClientInstance.channel("messaging", session.callId);
+        const chatChannel = chatClientInstance.channel("messaging", callId);
         await chatChannel.watch();
         setChannel(chatChannel);
       } catch (error) {
-        toast.error("Failed to join video call");
-        console.error("Error init call", error);
+        if (!isCancelled) {
+          toast.error("Failed to join video call");
+          console.error("Error init call", error);
+        }
       } finally {
-        setIsInitializingCall(false);
+        if (!isCancelled) {
+          setIsInitializingCall(false);
+        }
       }
     };
 
-    if (session && !loadingSession) initCall();
+    initCall();
 
-    // cleanup - performance reasons
     return () => {
-      // iife
+      isCancelled = true;
+      hasInitialized.current = false;
       (async () => {
         try {
           if (videoCall) await videoCall.leave();
@@ -77,7 +101,7 @@ function useStreamClient(session, loadingSession, isHost, isParticipant) {
         }
       })();
     };
-  }, [session, loadingSession, isHost, isParticipant]);
+  }, [callId, sessionStatus, canJoin]);
 
   return {
     streamClient,
@@ -88,4 +112,4 @@ function useStreamClient(session, loadingSession, isHost, isParticipant) {
   };
 }
 
-export default useStreamClient;
+export default useStreamClient;

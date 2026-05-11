@@ -10,46 +10,219 @@
 @layer base {
   :root {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    /* Light Mode Variables */
-    --bg-main: #f8fafc;
-    --text-main: #0f172a;
-  }
-
-  /* Dark Mode Variables - Triggered by the context provider */
-  .dark {
-    --bg-main: #0a0a0a; /* Deep black for premium OLED look */
+    --bg-main: #020617; /* slate-950 */
     --text-main: #f1f5f9;
   }
 
   body {
     background-color: var(--bg-main);
     color: var(--text-main);
-    /* Smooth transition when switching themes */
     @apply transition-colors duration-300 ease-in-out;
   }
 }
 
 @layer utilities {
-  /* Modern Premium Glass Card - Responsive to Dark Mode */
+  /* Modern Premium Glass Card */
   .glass-card {
     @apply bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md 
            border border-white dark:border-zinc-800 
            shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)];
   }
 
-  /* Modern Hide Scrollbar Utility */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  /* Hide Scrollbar */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Anti-cheat: no selection in proctored mode */
+  .no-select {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+    pointer-events: auto;
   }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  .no-select::selection { background: transparent; }
+
+  /* Blur overlay for unrevealed questions */
+  .question-blur {
+    filter: blur(8px); pointer-events: none;
+    user-select: none; -webkit-user-select: none;
+    transition: filter 0.4s ease;
   }
+  .question-blur.revealed { filter: none; pointer-events: auto; }
 }
+
+/* ── Animation Keyframes ──────────────────────────────────────────────── */
+
+
+@keyframes orb-drift {
+  0%   { transform: translate(0px,   0px)   scale(1); }
+  33%  { transform: translate(40px,  -30px) scale(1.05); }
+  66%  { transform: translate(-25px, 20px)  scale(0.97); }
+  100% { transform: translate(0px,   0px)   scale(1); }
+}
+
+@keyframes orb-drift-reverse {
+  0%   { transform: translate(0px,   0px)   scale(1); }
+  33%  { transform: translate(-35px, 25px)  scale(1.03); }
+  66%  { transform: translate(20px,  -20px) scale(0.98); }
+  100% { transform: translate(0px,   0px)   scale(1); }
+}
+
+@keyframes shimmer-sweep {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+  50%       { box-shadow: 0 0 24px 4px rgba(99, 102, 241, 0.18); }
+}
+
+@keyframes border-glow {
+  0%, 100% { border-color: rgba(255,255,255,0.08); }
+  50%       { border-color: rgba(99, 102, 241, 0.35); }
+}
+
+@keyframes scan-line {
+  0%   { top: -5%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 105%; opacity: 0; }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Animation Utility Classes ───────────────────────────────────────── */
+
+.animate-orb-drift         { animation: orb-drift         22s ease-in-out infinite; }
+.animate-orb-drift-reverse { animation: orb-drift-reverse 28s ease-in-out infinite; }
+.animate-orb-drift-slow    { animation: orb-drift         38s ease-in-out infinite; }
+
+.animate-slide-up   { animation: slide-up-fade 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-slide-left { animation: slide-in-left 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-fade-in    { animation: fade-in       0.4s ease both; }
+.animate-scale-in   { animation: scale-in      0.35s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-float      { animation: float-gentle  4s ease-in-out infinite; }
+.animate-count-up   { animation: count-up      0.5s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-glow-pulse { animation: glow-pulse    3s ease-in-out infinite; }
+.animate-border-glow{ animation: border-glow   3s ease-in-out infinite; }
+
+/* Stagger delays */
+.delay-0   { animation-delay: 0ms; }
+.delay-75  { animation-delay: 75ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-225 { animation-delay: 225ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+
+/* Shimmer card effect */
+.shimmer-card {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255,255,255,0.04) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-sweep 3.5s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Scan line overlay (for premium glass panels) */
+.scan-line-overlay {
+  position: relative;
+  overflow: hidden;
+}
+.scan-line-overlay::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,0.4), transparent);
+  animation: scan-line 8s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
 
 /* Fix for Monaco Editor Container in Dark Mode */
 .dark .monaco-editor,
 .dark .monaco-editor .margin,
 .dark .monaco-editor-background {
   background-color: #0a0a0a !important;
+}
+
+/* Stream SDK — Fix three-dots participant action popup readability */
+.str-video__participant-actions-menu,
+.str-video__generic-menu,
+.str-video__menu-container {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4) !important;
+}
+.str-video__participant-actions-menu button,
+.str-video__generic-menu button,
+.str-video__generic-menu__item,
+.str-video__menu-container button {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+.str-video__participant-actions-menu button:hover,
+.str-video__generic-menu button:hover,
+.str-video__generic-menu__item:hover,
+.str-video__menu-container button:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+}
+.str-video__participant-actions-menu button svg,
+.str-video__generic-menu button svg,
+.str-video__menu-container button svg {
+  color: #e2e8f0 !important;
+  fill: #e2e8f0 !important;
+}
+
+/* Block clipboard in proctored code editor */
+.clipboard-blocked {
+  -webkit-user-select: none;
+  user-select: none;
 }

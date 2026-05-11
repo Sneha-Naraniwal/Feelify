@@ -1,6 +1,16 @@
 import React, { useState } from "react";
-import { ArrowRightIcon, Code2Icon, UsersIcon, LoaderIcon, ZapIcon, CopyIcon, CheckIcon, TicketIcon } from "lucide-react";
+import { IconArrowRight, IconCode, IconUsers, IconLoader, IconBolt, IconCopy, IconCheck, IconTicket } from "@tabler/icons-react";
 import { Link } from "react-router";
+import { motion, AnimatePresence } from "framer-motion";
+
+const listContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+};
+const listItem = {
+  hidden: { opacity: 0, x: -12 },
+  show:   { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+};
 
 function ActiveSessions({ sessions = [], isLoading, isUserInSession }) {
   const [copiedId, setCopiedId] = useState(null);
@@ -12,93 +22,131 @@ function ActiveSessions({ sessions = [], isLoading, isUserInSession }) {
   };
 
   return (
-    <div className="bg-white/70 backdrop-blur-md rounded-[2.5rem] p-8 border border-white shadow-[0_20px_50px_rgba(0,0,0,0.02)] h-full">
+    <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/8">
       
-      {/* HEADER SECTION */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <div className="size-12 bg-black rounded-2xl flex items-center justify-center shadow-xl shadow-black/10">
-            <ZapIcon className="text-white size-6" />
+      {/* HEADER */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="size-10 bg-white/8 border border-white/10 rounded-xl flex items-center justify-center">
+            <IconBolt stroke={1.5} className="text-indigo-400 size-5" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">My Sessions</h2>
-            <p className="text-slate-400 text-[9px] font-bold uppercase tracking-[0.2em] opacity-60">Invite Only</p>
+            <h2 className="text-sm font-bold text-white tracking-tight">My Sessions</h2>
+            <p className="text-slate-500 text-[9px] font-bold uppercase tracking-[0.2em]">Invite Only</p>
           </div>
         </div>
         
-        <div className="px-4 py-2 bg-black text-white rounded-full flex items-center gap-2 shadow-lg shadow-black/10">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2"
+        >
           <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
           </span>
-          <span className="text-[9px] font-bold uppercase tracking-widest">{sessions.length} Active</span>
-        </div>
+          <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-400">{sessions.length} Active</span>
+        </motion.div>
       </div>
 
       {/* SESSIONS LIST */}
-      <div className="space-y-4">
+      <AnimatePresence mode="wait">
         {isLoading ? (
-          <div className="py-16 flex flex-col items-center gap-4">
-            <LoaderIcon className="animate-spin text-slate-300 size-8" />
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Syncing...</span>
-          </div>
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="py-14 flex flex-col items-center gap-3"
+          >
+            <IconLoader stroke={1.5} className="animate-spin text-slate-600 size-7" />
+            <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Syncing...</span>
+          </motion.div>
         ) : sessions.length === 0 ? (
-          <div className="py-12 text-center border-2 border-dashed border-slate-100 rounded-[2rem] bg-slate-50/30">
-            <TicketIcon size={32} className="mx-auto text-slate-200 mb-3" />
-            <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">No active sessions</p>
-            <p className="text-slate-300 text-[10px] mt-1">Create a session and share the invite code</p>
-          </div>
+          <motion.div
+            key="empty"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="py-12 text-center border border-dashed border-white/8 rounded-xl bg-white/3"
+          >
+            <IconTicket size={30} stroke={1.5} className="mx-auto text-slate-700 mb-3 animate-float" />
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">No active sessions</p>
+            <p className="text-slate-600 text-[10px] mt-1">Create a session and share the invite code</p>
+          </motion.div>
         ) : (
-          sessions.map((session) => (
-            <div 
-              key={session._id} 
-              className="group relative bg-white/50 hover:bg-white p-5 rounded-[1.5rem] border border-transparent hover:border-slate-100 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] transition-all duration-500"
-            >
-              <div className="flex items-center justify-between relative z-10">
-                <div className="flex items-center gap-4">
-                  <div className="size-14 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                    <Code2Icon className="text-white size-7" />
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-md font-bold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">
-                      {session.problem}
-                    </h3>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[8px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full uppercase tracking-widest border border-indigo-100">
-                        {session.difficulty}
-                      </span>
-                      <div className="flex items-center gap-1.5 text-slate-400 font-bold text-[9px] uppercase tracking-tighter">
-                        <UsersIcon size={12} />
-                        <span>{session.participant ? "Full" : "1/2 Open"}</span>
+          <motion.div
+            key="list"
+            variants={listContainer}
+            initial="hidden"
+            animate="show"
+            className="space-y-3"
+          >
+            {sessions.map((session) => (
+              <motion.div
+                key={session._id}
+                variants={listItem}
+                whileHover={{ x: 3, transition: { duration: 0.2 } }}
+                className="group relative bg-white/5 hover:bg-white/8 border border-white/8 hover:border-white/15 p-4 rounded-xl transition-all duration-300 shimmer-card"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="size-11 bg-gradient-to-br from-indigo-500/20 to-violet-500/20 border border-indigo-500/20 rounded-xl flex items-center justify-center">
+                      <IconCode stroke={1.5} className="text-indigo-400 size-5" />
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-sm font-bold text-white mb-1 group-hover:text-indigo-300 transition-colors">
+                        {session.problems?.length > 1
+                          ? `${session.problems[0]} +${session.problems.length - 1} more`
+                          : session.problems?.[0] || session.problem}
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[8px] font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest border border-indigo-500/20">
+                          {session.difficulty}
+                        </span>
+                        <div className="flex items-center gap-1 text-slate-500 font-bold text-[9px] uppercase tracking-tighter">
+                          <IconUsers size={11} stroke={1.5} />
+                          <span>{session.participant ? "Full" : "1/2 Open"}</span>
+                        </div>
+                        {session.inviteCode && (
+                          <button
+                            onClick={(e) => { e.preventDefault(); handleCopy(session.inviteCode, session._id); }}
+                            className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-full text-[9px] font-bold uppercase tracking-wider border border-emerald-500/20 hover:bg-emerald-500/20 transition-all"
+                          >
+                            <IconTicket size={9} stroke={1.5} />
+                            {session.inviteCode}
+                            <AnimatePresence mode="wait">
+                              {copiedId === session._id ? (
+                                <motion.span key="check" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                                  <IconCheck size={9} stroke={2.5} />
+                                </motion.span>
+                              ) : (
+                                <motion.span key="copy" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                                  <IconCopy size={9} stroke={1.5} />
+                                </motion.span>
+                              )}
+                            </AnimatePresence>
+                          </button>
+                        )}
                       </div>
-                      {/* Invite Code Badge */}
-                      {session.inviteCode && (
-                        <button
-                          onClick={(e) => { e.preventDefault(); handleCopy(session.inviteCode, session._id); }}
-                          className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[9px] font-bold uppercase tracking-wider border border-emerald-100 hover:bg-emerald-100 transition-all"
-                        >
-                          <TicketIcon size={10} />
-                          {session.inviteCode}
-                          {copiedId === session._id ? <CheckIcon size={10} /> : <CopyIcon size={10} />}
-                        </button>
-                      )}
                     </div>
                   </div>
-                </div>
 
-                <Link 
-                  to={`/session/${session._id}`}
-                  className="bg-black text-white px-6 py-3 rounded-xl font-bold text-[9px] uppercase tracking-[0.15em] transition-all hover:bg-slate-800 shadow-md flex items-center gap-2"
-                >
-                  {isUserInSession(session) ? "Resume" : "Enter"}
-                  <ArrowRightIcon className="size-3" />
-                </Link>
-              </div>
-            </div>
-          ))
+                  <Link
+                    to={`/session/${session._id}`}
+                    className="bg-white/8 hover:bg-white/14 border border-white/10 text-white px-5 py-2.5 rounded-xl font-bold text-[9px] uppercase tracking-[0.15em] transition-all flex items-center gap-2 hover:gap-3"
+                  >
+                    {isUserInSession(session) ? "Resume" : "Enter"}
+                    <IconArrowRight size={12} stroke={2} />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   );
 }

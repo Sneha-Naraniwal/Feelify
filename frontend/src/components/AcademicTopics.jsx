@@ -62,70 +62,51 @@ function AcademicTopics() {
   ];
 
   return (
-    <div className="bg-white/70 backdrop-blur-md rounded-[3.5rem] p-12 border border-white shadow-[0_30px_60px_rgba(0,0,0,0.03)]">
+    <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/8">
       
       {/* SECTION HEADER */}
-      <div className="flex items-center justify-between mb-12">
-        <div className="flex items-center gap-6">
-          <div className="size-16 bg-slate-900 rounded-2xl flex items-center justify-center shadow-xl shadow-black/10">
-            <BookOpenIcon className="text-white size-7" strokeWidth={2} />
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
-              Academic Modules
-            </h2>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.25em]">
-              Curated Interview Prep
-            </p>
-          </div>
+      <div className="flex items-center gap-4 mb-8">
+        <div className="size-12 bg-white/8 border border-white/10 rounded-xl flex items-center justify-center">
+          <BookOpenIcon className="text-violet-400 size-5" strokeWidth={2} />
+        </div>
+        <div>
+          <h2 className="text-lg font-bold text-white tracking-tight">Academic Modules</h2>
+          <p className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.25em]">Curated Interview Prep</p>
         </div>
       </div>
 
       {/* TOPIC GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {topics.map((topic) => (
-          <div 
-            key={topic.id} 
-            className="group relative bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:border-slate-200 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-700 overflow-hidden"
+          <div
+            key={topic.id}
+            className="group relative bg-white/5 hover:bg-white/8 border border-white/8 hover:border-white/15 p-6 rounded-xl transition-all duration-300 overflow-hidden"
           >
             <div className="relative z-10">
-              <div className="flex justify-between items-start mb-10">
-                
-                {/* Subject Icon Container */}
-                <div className={`size-14 bg-gradient-to-br ${topic.gradient} rounded-2xl flex items-center justify-center text-white/90 shadow-2xl ${topic.shadowColor} border border-white/20 group-hover:scale-110 transition-all duration-500`}>
-                  {React.cloneElement(topic.icon, { strokeWidth: 2 })}
+              <div className="flex justify-between items-start mb-8">
+                <div className={`size-12 bg-gradient-to-br ${topic.gradient} rounded-xl flex items-center justify-center text-white/90 shadow-lg group-hover:scale-110 transition-all duration-500`}>
+                  {React.cloneElement(topic.icon, { size: 20, strokeWidth: 2 })}
                 </div>
-                
-                {/* Status Badge */}
-                <div className="px-3.5 py-1.5 bg-slate-50 text-slate-400 border border-slate-100 rounded-full text-[9px] font-bold uppercase tracking-widest group-hover:bg-emerald-50 group-hover:text-emerald-700 transition-all">
+                <div className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-[9px] font-bold uppercase tracking-widest">
                   Ready
                 </div>
               </div>
 
-              {/* Title */}
-              <h3 className="text-xl font-bold text-slate-900 mb-1.5 line-clamp-1 transition-colors group-hover:text-black">
+              <h3 className="text-sm font-bold text-white mb-1 line-clamp-1">
                 {topic.title}
               </h3>
-              
-              {/* Technical Tag */}
-              <div className="flex items-center gap-2 mb-10">
-                <TerminalIcon size={12} className="text-slate-300" />
-                <span className="text-[10px] font-mono font-medium text-slate-400 uppercase tracking-widest">
-                  // {topic.tag}
-                </span>
+              <div className="flex items-center gap-1.5 mb-7">
+                <TerminalIcon size={11} className="text-slate-600" />
+                <span className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">// {topic.tag}</span>
               </div>
 
-              {/* Footer Section */}
-              <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-sm font-bold text-slate-400 uppercase tracking-tight transition-colors group-hover:text-slate-500">
-                  {topic.count}
-                </span>
-                
-                <Link 
+              <div className="pt-4 border-t border-white/8 flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-tight">{topic.count}</span>
+                <Link
                   to={`/academic?subject=${topic.id}`}
-                  className="size-11 bg-slate-900 text-white rounded-full flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all shadow-xl shadow-black/10"
+                  className="size-9 bg-gradient-to-br from-indigo-500 to-violet-600 text-white rounded-full flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all shadow-md shadow-indigo-500/20"
                 >
-                  <ArrowRightIcon size={18} strokeWidth={2} />
+                  <ArrowRightIcon size={15} strokeWidth={2} />
                 </Link>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { useState } from "react"; // 1. Add useState
+import { useState } from "react";
 import { Link } from "react-router";
 import Navbar from "../components/Navbar";
 import { PROBLEMS } from "../data/problems";
@@ -6,11 +6,8 @@ import { ChevronRightIcon, Code2Icon, SearchIcon } from "lucide-react";
 
 function ProblemsPage() {
   const allProblems = Object.values(PROBLEMS);
-  
-  // 2. State for search query
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 3. Filter problems based on the search query
   const filteredProblems = allProblems.filter((problem) => {
     const searchLower = searchQuery.toLowerCase();
     return (
@@ -20,36 +17,47 @@ function ProblemsPage() {
     );
   });
 
+  const diffBadge = (difficulty) => {
+    if (difficulty === "Easy")   return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+    if (difficulty === "Medium") return "bg-amber-500/10 text-amber-400 border-amber-500/20";
+    return "bg-rose-500/10 text-rose-400 border-rose-500/20";
+  };
+
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-slate-950">
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+      <div className="max-w-5xl mx-auto px-6 py-12 ml-64">
+
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
-            <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight mb-3">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="size-1.5 bg-indigo-400 rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Library</span>
+            </div>
+            <h1 className="text-4xl font-extrabold text-white tracking-tight">
               Problem Library
             </h1>
-            <p className="text-slate-500 font-medium max-w-md">
+            <p className="text-slate-500 font-medium mt-1">
               Curated coding challenges to sharpen your skills.
             </p>
           </div>
 
-          {/* 4. Connected Search Bar */}
-          <div className="relative group">
-            <SearchIcon className={`absolute left-4 top-1/2 -translate-y-1/2 size-4 transition-colors ${searchQuery ? 'text-indigo-600' : 'text-slate-400'}`} />
-            <input 
-              type="text" 
-              placeholder="Search by title, category, or difficulty..." 
-              value={searchQuery} // Bind value
-              onChange={(e) => setSearchQuery(e.target.value)} // Handle change
-              className="pl-12 pr-6 py-3 bg-white border border-slate-200 rounded-2xl w-full md:w-96 shadow-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
+          {/* Search Bar */}
+          <div className="relative">
+            <SearchIcon className={`absolute left-4 top-1/2 -translate-y-1/2 size-4 transition-colors ${searchQuery ? "text-indigo-400" : "text-slate-600"}`} />
+            <input
+              type="text"
+              placeholder="Search by title, category, difficulty..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-11 pr-5 py-2.5 bg-white/5 border border-white/10 rounded-xl w-full md:w-80 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/40 focus:bg-white/8 transition-all"
             />
-            {/* Clear button if user typed something */}
             {searchQuery && (
-              <button 
+              <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 font-bold text-xs"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 font-bold text-xs transition-colors"
               >
                 Clear
               </button>
@@ -57,49 +65,45 @@ function ProblemsPage() {
           </div>
         </div>
 
-        {/* 5. Use filteredProblems instead of allProblems */}
-        <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
-          <div className="divide-y divide-slate-50">
+        {/* Problem List */}
+        <div className="bg-white/4 rounded-2xl border border-white/8 overflow-hidden">
+          <div className="divide-y divide-white/5">
             {filteredProblems.length > 0 ? (
               filteredProblems.map((problem) => (
                 <Link
                   key={problem.id}
                   to={`/problem/${problem.id}`}
-                  className="group flex items-center justify-between p-8 hover:bg-slate-50/80 transition-all duration-300"
+                  className="group flex items-center justify-between px-7 py-5 hover:bg-white/5 transition-all duration-200"
                 >
-                  <div className="flex items-center gap-6">
-                    <div className="size-14 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 group-hover:scale-110 group-hover:bg-white group-hover:shadow-xl group-hover:shadow-indigo-500/10 transition-all duration-500">
-                      <Code2Icon className="size-6 text-slate-400 group-hover:text-indigo-600" />
+                  <div className="flex items-center gap-5">
+                    <div className="size-12 bg-white/5 border border-white/8 rounded-xl flex items-center justify-center group-hover:bg-indigo-500/10 group-hover:border-indigo-500/25 transition-all duration-300">
+                      <Code2Icon className="size-5 text-slate-600 group-hover:text-indigo-400 transition-colors" />
                     </div>
 
                     <div>
-                      <div className="flex items-center gap-3 mb-1">
-                        <h2 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                      <div className="flex items-center gap-3 mb-0.5">
+                        <h2 className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors">
                           {problem.title}
                         </h2>
-                        <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md uppercase tracking-widest border ${
-                          problem.difficulty === 'Easy' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                          problem.difficulty === 'Medium' ? 'bg-amber-50 text-amber-600 border-amber-100' :
-                          'bg-rose-50 text-rose-600 border-rose-100'
-                        }`}>
+                        <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded-md uppercase tracking-widest border ${diffBadge(problem.difficulty)}`}>
                           {problem.difficulty}
                         </span>
                       </div>
-                      <p className="text-sm text-slate-400 font-medium">
+                      <p className="text-[11px] text-slate-600 font-medium">
                         {problem.category}
                       </p>
                     </div>
                   </div>
 
-                  <div className="size-10 rounded-full border border-slate-200 flex items-center justify-center group-hover:bg-slate-900 group-hover:border-slate-900 transition-all">
-                    <ChevronRightIcon className="size-5 text-slate-400 group-hover:text-white" />
+                  <div className="size-8 rounded-lg border border-white/10 flex items-center justify-center group-hover:bg-indigo-500 group-hover:border-indigo-500 transition-all">
+                    <ChevronRightIcon className="size-4 text-slate-600 group-hover:text-white transition-colors" />
                   </div>
                 </Link>
               ))
             ) : (
-              /* No Results State */
               <div className="p-20 text-center">
-                <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No problems match your search</p>
+                <SearchIcon size={28} className="mx-auto mb-4 text-slate-700" />
+                <p className="text-slate-600 font-bold uppercase tracking-widest text-xs">No problems match your search</p>
               </div>
             )}
           </div>

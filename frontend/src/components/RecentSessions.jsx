@@ -1,81 +1,127 @@
 import { formatDistanceToNow } from "date-fns";
-import { Clock, Trophy, Layout, ChevronRight, Hash } from "lucide-react";
+import { IconClockHour4, IconChevronRight, IconUser, IconBolt, IconShield } from "@tabler/icons-react";
+import { Link } from "react-router";
+import { useUser } from "@clerk/clerk-react";
+
+const DIFF_COLORS = {
+  easy:   "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  medium: "bg-amber-500/10  text-amber-400  border-amber-500/20",
+  hard:   "bg-rose-500/10   text-rose-400   border-rose-500/20",
+  mixed:  "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+};
 
 function RecentSessions({ sessions = [], isLoading }) {
-  return (
-    <div className="mt-20">
-      {/* SECTION HEADER */}
-      <div className="flex items-center justify-between mb-10">
-        <div className="flex items-center gap-4">
-          <div className="size-12 bg-amber-100 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-100/50">
-            <Trophy className="text-amber-600 size-6" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-black text-slate-900 tracking-tight">Recent Activity</h2>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-70">Your historical logs</p>
-          </div>
-        </div>
-        
-        <button className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-black transition-colors flex items-center gap-2 group">
-          View All Logs <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-        </button>
-      </div>
+  const { user } = useUser();
 
-      {/* GRID LAYOUT */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {sessions.map((session) => (
-          <div 
-            key={session._id} 
-            className="group relative bg-white rounded-[2.5rem] p-8 border border-white shadow-[0_10px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_40px_80px_rgba(0,0,0,0.06)] hover:-translate-y-2 transition-all duration-500 overflow-hidden"
-          >
-            {/* Subtle numbering or background element */}
-            <div className="absolute -right-2 -top-2 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-               <Hash size={120} strokeWidth={4} />
-            </div>
-
-            <div className="relative z-10">
-              <div className="flex justify-between items-center mb-8">
-                <div className="size-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-xl group-hover:rotate-6 transition-transform duration-500">
-                  <Layout size={24} />
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                    {formatDistanceToNow(new Date(session.createdAt), { addSuffix: true })}
-                  </span>
-                  <div className="h-1 w-4 bg-emerald-400 rounded-full mt-1 animate-pulse" />
-                </div>
-              </div>
-
-              <h3 className="text-xl font-black text-slate-900 mb-3 group-hover:text-amber-600 transition-colors line-clamp-1">
-                {session.problem}
-              </h3>
-
-              <div className="flex items-center gap-3 mb-8">
-                <span className={`text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest border ${
-                  session.difficulty === 'hard' ? 'bg-rose-50 text-rose-600 border-rose-100' : 
-                  session.difficulty === 'medium' ? 'bg-amber-50 text-amber-600 border-amber-100' : 
-                  'bg-emerald-50 text-emerald-600 border-emerald-100'
-                }`}>
-                  {session.difficulty}
-                </span>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter opacity-40">
-                  // LOG_RECORD_SUCCESS
-                </span>
-              </div>
-
-              <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-slate-400">
-                  <Clock size={14} className="group-hover:text-black transition-colors" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Terminal Synced</span>
-                </div>
-                <div className="size-8 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 group-hover:bg-black group-hover:text-white transition-all">
-                  <ChevronRight size={14} />
-                </div>
-              </div>
-            </div>
-          </div>
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-white/5 rounded-xl p-6 border border-white/8 animate-pulse h-44" />
         ))}
       </div>
+    );
+  }
+
+  if (sessions.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-14 text-center">
+        <div className="size-14 bg-white/5 rounded-2xl flex items-center justify-center mb-4 border border-white/8">
+          <IconClockHour4 size={24} stroke={1} className="text-slate-600" />
+        </div>
+        <p className="text-sm font-bold text-slate-500">No recent sessions</p>
+        <p className="text-[11px] text-slate-600 mt-1">Sessions you host or join will appear here.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {sessions.slice(0, 3).map((session) => {
+        const iAmHost = session.host?.clerkId === user?.id;
+        const other   = iAmHost ? session.participant : session.host;
+        const role    = iAmHost ? "Hosted" : "Participated";
+
+        const titles = session.problems?.length
+          ? session.problems
+          : session.problem
+          ? [session.problem]
+          : ["—"];
+
+        let duration = null;
+        if (session.startedAt && session.endedAt) {
+          const ms   = new Date(session.endedAt) - new Date(session.startedAt);
+          const mins = Math.floor(ms / 60000);
+          const secs = Math.floor((ms % 60000) / 1000);
+          duration = `${mins}m ${secs}s`;
+        }
+
+        return (
+          <Link
+            key={session._id}
+            to="/history"
+            className="group relative bg-white/5 hover:bg-white/8 border border-white/8 hover:border-white/15 rounded-xl p-5 hover:-translate-y-1 transition-all duration-300 overflow-hidden block"
+          >
+            {/* Role badge */}
+            <div className="flex items-center justify-between mb-4">
+              <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border ${
+                iAmHost
+                  ? "bg-white/10 text-slate-300 border-white/10"
+                  : "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
+              }`}>
+                {role}
+              </span>
+              <span className="text-[10px] text-slate-600 font-medium">
+                {formatDistanceToNow(new Date(session.endedAt || session.createdAt), { addSuffix: true })}
+              </span>
+            </div>
+
+            {/* Problem(s) */}
+            <h3 className="text-sm font-black text-white mb-1 line-clamp-1 group-hover:text-indigo-300 transition-colors">
+              {titles[0]}
+            </h3>
+            {titles.length > 1 && (
+              <p className="text-[10px] text-slate-600 font-medium mb-2">
+                +{titles.length - 1} more problem{titles.length > 2 ? "s" : ""}
+              </p>
+            )}
+
+            {/* Difficulty */}
+            <span className={`inline-block text-[9px] font-black px-2 py-0.5 rounded-md border uppercase tracking-widest mb-4 ${
+              DIFF_COLORS[session.difficulty] || DIFF_COLORS.easy
+            }`}>
+              {session.difficulty}
+            </span>
+
+            {/* Footer */}
+            <div className="pt-3 border-t border-white/8 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {other?.profileImage ? (
+                  <img src={other.profileImage} alt="" className="size-6 rounded-lg object-cover" />
+                ) : (
+                  <div className="size-6 rounded-lg bg-white/8 flex items-center justify-center">
+                    <IconUser size={12} stroke={1.5} className="text-slate-500" />
+                  </div>
+                )}
+                <span className="text-[10px] font-bold text-slate-500 truncate max-w-[80px]">
+                  {other?.name || (iAmHost ? "No participant" : "—")}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {duration && (
+                  <div className="flex items-center gap-1 text-[10px] text-slate-600">
+                    <IconClockHour4 size={11} stroke={1.5} /> {duration}
+                  </div>
+                )}
+                <div className="size-6 bg-white/8 rounded-lg flex items-center justify-center group-hover:bg-indigo-500/20 group-hover:text-indigo-400 text-slate-500 transition-all">
+                  <IconChevronRight size={12} stroke={2} />
+                </div>
+              </div>
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 }

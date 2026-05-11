@@ -1,98 +1,100 @@
-import React from "react";
 import { useUser } from "@clerk/clerk-react";
-import { ArrowRightIcon, SparklesIcon, ZapIcon } from "lucide-react";
+import { ZapIcon, ArrowRightIcon, HistoryIcon, TrophyIcon } from "lucide-react";
+import { Link } from "react-router";
 
 function WelcomeSection({ onCreateSession }) {
   const { user } = useUser();
 
   return (
-    <div className="relative group">
-      {/* BACKGROUND GLOWS - These stay to keep the "fancy" depth */}
-      <div className="absolute -top-24 -left-20 size-96 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute -bottom-24 -right-20 size-96 bg-rose-500/10 rounded-full blur-[120px] pointer-events-none" />
+    <div className="relative rounded-[2.5rem] overflow-hidden bg-slate-900 shadow-[0_20px_80px_rgba(0,0,0,0.18)]">
 
-      <div className="relative bg-white/60 backdrop-blur-xl border border-white rounded-[3.5rem] p-12 shadow-[0_30px_100px_rgba(0,0,0,0.04)] overflow-hidden">
-        
-        {/* Decorative Grid Pattern */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-             style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")` }} 
-        />
+      {/* ── Mesh gradient layer ── */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-indigo-600/30 rounded-full blur-[100px]" />
+        <div className="absolute -bottom-24 right-0 w-[400px] h-[400px] bg-violet-600/25 rounded-full blur-[90px]" />
+        <div className="absolute top-10 right-[35%] w-[300px] h-[300px] bg-rose-500/15 rounded-full blur-[80px]" />
+      </div>
 
-        <div className="relative z-10 flex flex-row items-center justify-between gap-12">
-          
-          <div className="flex-1">
-            {/* REMOVED: The "System_Online" Badge. 
-                This gives the Name Header more "breathing room" at the top.
-            */}
+      {/* ── Noise texture ── */}
+      <div
+        className="absolute inset-0 opacity-[0.035] pointer-events-none mix-blend-overlay"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+        }}
+      />
 
-            <div className="flex items-start gap-10">
-              {/* BRAND ICON WITH PULSE */}
-              <div className="relative hidden xl:block">
-                <div className="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 animate-pulse" />
-                <div className="relative size-24 bg-slate-900 rounded-[2rem] flex items-center justify-center shadow-2xl rotate-3 group-hover:rotate-0 transition-transform duration-700">
-                  <SparklesIcon className="size-12 text-white" strokeWidth={1.5} />
-                </div>
-              </div>
+      {/* ── Subtle grid ── */}
+      <div
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)`,
+          backgroundSize: "48px 48px",
+        }}
+      />
 
-              <div>
-                {/* NAME HEADER */}
-                <h1 className="text-6xl font-bold text-slate-900 tracking-tighter leading-[0.85] mb-10">
-                  Welcome back, <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-rose-500">
-                    {user?.firstName || "Operator"}
-                  </span>
-                </h1>
-                
-                {/* MOTIVATIONAL SECTION - Clean and Large */}
-                <div className="space-y-6">
-                  <div className="flex items-center gap-6">
-                    <div className="h-[2px] w-14 bg-gradient-to-r from-indigo-500 to-transparent flex-shrink-0" />
-                    
-                    <p className="text-3xl md:text-4xl font-medium text-slate-500 tracking-tight italic leading-tight max-w-3xl">
-                      "Go beyond the <span className="text-slate-900 font-bold not-italic">limits</span>, we live once so why not <span className="relative inline-block text-indigo-600 font-bold not-italic">
-                        live it fully
-                        <span className="absolute -bottom-2 left-0 w-full h-[4px] bg-indigo-200/60 rounded-full" />
-                      </span>?"
-                    </p>
-                  </div>
-                  
-                  {/* BREAKTHROUGH TAG */}
-                  <div className="flex items-center gap-3 ml-20">
-                    <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 rounded-xl border border-emerald-100/50 shadow-sm">
-                      <div className="size-2 bg-emerald-500 rounded-full animate-pulse" />
-                      <span className="text-[10px] font-black text-emerald-700 uppercase tracking-[0.25em]">
-                        Ready for Breakthrough
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+      {/* ── Content ── */}
+      <div className="relative z-10 px-10 py-9 flex items-center justify-between gap-8">
+
+        {/* Left */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">
+              <span className="size-1.5 bg-emerald-400 rounded-full animate-pulse inline-block" />
+              Interview Platform
+            </span>
           </div>
 
-          {/* ACTION BUTTON PILL */}
-          <div className="flex-shrink-0">
-            <button
-              onClick={onCreateSession}
-              className="group relative flex items-center gap-6 bg-slate-900 hover:bg-black p-2 rounded-full transition-all duration-500 hover:scale-105 active:scale-95 shadow-2xl shadow-black/20 overflow-hidden"
+          <h1 className="text-4xl font-extrabold tracking-tight leading-tight text-white mb-2">
+            Welcome back,{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-rose-400">
+              {user?.firstName || "there"}
+            </span>
+          </h1>
+
+          <p className="text-slate-400 text-sm font-medium mb-7 max-w-md">
+            Host or join a live coding session, review your history, and track your ranking.
+          </p>
+
+          {/* Quick links */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <Link
+              to="/history"
+              className="flex items-center gap-2 px-4 py-2 bg-white/8 hover:bg-white/14 border border-white/10 hover:border-white/20 rounded-xl text-[11px] font-bold text-slate-300 hover:text-white transition-all duration-200"
             >
-              <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:left-full transition-all duration-1000" />
-
-              <div className="size-20 bg-gradient-to-br from-indigo-500 via-violet-600 to-rose-500 rounded-full flex items-center justify-center shadow-xl shadow-indigo-500/30 group-hover:shadow-indigo-500/50 transition-shadow">
-                <ZapIcon className="size-8 text-white fill-white group-hover:scale-110 transition-transform" strokeWidth={2.5} />
-              </div>
-
-              <div className="flex flex-col items-start pr-10">
-                <span className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 group-hover:text-indigo-400 transition-colors">Initiate</span>
-                <span className="text-2xl font-bold tracking-tight text-white flex items-center gap-4">
-                  Create Session
-                  <ArrowRightIcon className="size-6 text-indigo-400 group-hover:translate-x-2 transition-transform" />
-                </span>
-              </div>
-            </button>
+              <HistoryIcon size={12} /> Session History
+            </Link>
+            <Link
+              to="/leaderboard"
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/30 hover:border-indigo-400/50 rounded-xl text-[11px] font-bold text-indigo-300 hover:text-indigo-200 transition-all duration-200"
+            >
+              <TrophyIcon size={12} /> Leaderboard
+            </Link>
           </div>
-
         </div>
+
+        {/* Right — Create Session CTA */}
+        <div className="shrink-0">
+          <button
+            onClick={onCreateSession}
+            className="group relative flex items-center gap-5 bg-white/10 hover:bg-white/15 border border-white/15 hover:border-white/25 px-2 py-2 pr-8 rounded-full transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-xl backdrop-blur-sm overflow-hidden"
+          >
+            {/* Shimmer */}
+            <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/8 to-transparent group-hover:left-full transition-all duration-700 rounded-full" />
+
+            <div className="size-14 bg-gradient-to-br from-indigo-500 via-violet-500 to-rose-500 rounded-full flex items-center justify-center shadow-lg shadow-indigo-600/40 group-hover:shadow-indigo-500/60 transition-shadow">
+              <ZapIcon className="size-6 text-white fill-white" strokeWidth={2.5} />
+            </div>
+
+            <div className="flex flex-col items-start">
+              <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-400 group-hover:text-indigo-300 transition-colors">New</span>
+              <span className="text-lg font-bold text-white flex items-center gap-3">
+                Create Session
+                <ArrowRightIcon className="size-4 text-indigo-400 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </div>
+          </button>
+        </div>
+
       </div>
     </div>
   );
